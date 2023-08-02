@@ -19,8 +19,11 @@ export default {
       { name: 'Task 10', executionSequence: 10 },
     ];
 
-    const { currentTask, isLastTask, navigateToNextTask } =
-      useTaskManagement(tasks);
+    const { currentTask, isLastTask, navigateToNextTask } = useTaskManagement(
+      tasks,
+      'name',
+      'executionSequence',
+    );
 
     return {
       currentTask,
