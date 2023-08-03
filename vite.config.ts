@@ -7,14 +7,17 @@ const isLib = process.env.BUILD_LIB;
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [dts({ exclude: ['src/examples/**/*'] }), vue()],
+  plugins: [
+    dts({ exclude: ['src/examples/**/*', 'src/lib/*.spec.ts'] }),
+    vue(),
+  ],
   build:
     isLib != null && isLib === 'true'
       ? {
           lib: {
             entry: 'src/lib/index.ts',
-            name: 'VueUseTaskManagement',
-            fileName: (format) => `vue-use-task-management.${format}.js`,
+            name: 'VueTaskManagement',
+            fileName: (format) => `vue-task-management.${format}.js`,
           },
           rollupOptions: {
             external: ['vue'],

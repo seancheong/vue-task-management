@@ -1,10 +1,17 @@
 {
-  "name": "vue-use-task-management",
-  "version": "0.0.0",
-  "description": "Vue 3 composition API for task management",
+  "name": "vue-task-management",
+  "version": "1.0.0",
+  "description": "A Vue 3 Composition API library designed for task management processes",
+  "license": "MIT",
   "author": "Sean Cheong Zhen Xiong (https://github.com/seancheong)",
-  "main": "dist/vue-use-task-management.umd.js",
-  "module": "dist/vue-use-task-management.es.js",
+  "homepage": "https://github.com/seancheong/vue-task-management",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seancheong/vue-task-management.git"
+  },
+  "bugs": "https://github.com/seancheong/vue-task-management/issues",
+  "main": "dist/vue-task-management.umd.js",
+  "module": "dist/vue-task-management.es.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -21,7 +28,7 @@
     "lint": "eslint --ext .js,.ts,.vue src",
     "dev": "vite",
     "build": "rimraf dist && npm run lint && vue-tsc && vite build",
-    "build-library": "BUILD_LIB=true npm run build",
+    "build-library": "BUILD_LIB=true npm run build && mv dist/src/lib/* dist/ && rimraf dist/src",
     "preview": "vite preview",
     "test": "jest"
   },
