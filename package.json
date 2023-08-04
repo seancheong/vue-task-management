@@ -28,7 +28,7 @@
     "lint": "eslint --ext .js,.ts,.vue src",
     "dev": "vite",
     "build": "rimraf dist && npm run lint && vue-tsc && vite build",
-    "build-library": "BUILD_LIB=true npm run build && mv dist/src/lib/* dist/ && rimraf dist/src",
+    "build-library": "BUILD_LIB=true npm run build && mv dist/src/lib/* dist/ && rimraf dist/src && rimraf dist/vite.svg",
     "preview": "vite preview",
     "test": "jest"
   },
