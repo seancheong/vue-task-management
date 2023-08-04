@@ -7,23 +7,20 @@ export default {
   setup() {
     // sample tasks for demonstration
     const tasks = [
-      { name: 'Task 1', executionSequence: 1 },
-      { name: 'Task 2', executionSequence: 2 },
-      { name: 'Task 3', executionSequence: 3 },
-      { name: 'Task 4', executionSequence: 4 },
-      { name: 'Task 5', executionSequence: 5 },
-      { name: 'Task 6', executionSequence: 6 },
-      { name: 'Task 7', executionSequence: 7 },
-      { name: 'Task 8', executionSequence: 8 },
-      { name: 'Task 9', executionSequence: 9 },
-      { name: 'Task 10', executionSequence: 10 },
+      { id: '1', order: 1, name: 'Task 1' },
+      { id: '2', order: 2, name: 'Task 2' },
+      { id: '3', order: 3, name: 'Task 3' },
+      { id: '4', order: 4, name: 'Task 4' },
+      { id: '5', order: 5, name: 'Task 5' },
+      { id: '6', order: 6, name: 'Task 6' },
+      { id: '7', order: 7, name: 'Task 7' },
+      { id: '8', order: 8, name: 'Task 8' },
+      { id: '9', order: 9, name: 'Task 9' },
+      { id: '10', order: 10, name: 'Task 10' },
     ];
 
-    const { currentTask, isLastTask, navigateToNextTask } = useTaskManagement(
-      tasks,
-      'name',
-      'executionSequence',
-    );
+    const { currentTask, isLastTask, navigateToNextTask } =
+      useTaskManagement(tasks);
 
     return {
       currentTask,
@@ -37,7 +34,7 @@ export default {
 <template>
   <div>
     <h2>Basic Example of useTaskManagement hook</h2>
-    <p>Current Task: {{ currentTask }}</p>
+    <p>Current Task: {{ currentTask?.name }}</p>
     <button @click="navigateToNextTask" :disabled="isLastTask">
       Next Task
     </button>

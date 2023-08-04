@@ -1,40 +1,41 @@
-import { type Ref, ref, computed } from 'vue';
+import { computed, type Ref, ref } from 'vue';
+import { type Id, type Task } from './types';
 
 /**
  * Custom hook to manage the execution of tasks in a sequence
  *
- * @param initialTasks array of tasks to be executed
- * @param id unique identifier of each task
- * @param sequenceKey key to determine the order of the tasks
- * @returns currentTask: the current task in the sequence, isLastTask: boolean to indicate if the current task is the last task in the sequence, navigateToNextTask: function to navigate to the next task in the sequence
+ * @param initialTasks array of tasks to be executed, each task can be any type of object as long as it has an id and order property
+ * @returns currentTask: the current task object in the sequence, isLastTask: boolean to indicate if the current task is the last task in the sequence, navigateToNextTask: function to navigate to the next task in the sequence
  */
-export const useTaskManagement = <T>(
-  initialTasks: T[] = [],
-  id: keyof T & (string | number),
-  sequenceKey: keyof T,
+export const useTaskManagement = (
+  initialTasks: Task[] = [],
 ): {
-  currentTask: Ref<string | null>;
+  currentTask: Ref<Task | null>;
   isLastTask: Ref<boolean>;
   navigateToNextTask: () => void;
 } => {
-  // check if the id property of the first item is neither a string nor a number
+  // throw error if the passed in id or order is not string or number
   if (
-    initialTasks.length > 0 &&
-    typeof initialTasks[0][id] !== 'string' &&
-    typeof initialTasks[0][id] !== 'number'
+    initialTasks.some(
+      (task) =>
+        (typeof task.id !== 'string' && typeof task.id !== 'number') ||
+        (typeof task.order !== 'string' && typeof task.order !== 'number'),
+    )
   ) {
-    throw new Error('The id property must be of type string or number.');
+    throw new Error(
+      'The id and order of the task must be either string or number',
+    );
   }
 
-  const tasks = ref<T[]>(initialTasks);
-  const linkedList = ref<Record<string, T & { nextTask: string | null }>>({});
-  const currentTask = ref<string | null>(null);
+  const tasks = ref<Task[]>(initialTasks);
+  const linkedList = ref<Record<Id, Task & { nextTaskId: Id | null }>>({});
+  const currentTask = ref<Task | null>(null);
 
   // check if the current task is the last task in the sequence
   const isLastTask = computed(() => {
     return (
       currentTask.value !== null &&
-      linkedList.value[currentTask.value]?.nextTask === null
+      linkedList.value[currentTask.value.id]?.nextTaskId === null
     );
   });
 
@@ -43,40 +44,36 @@ export const useTaskManagement = <T>(
   // this function is called once when the component is mounted
   const initializeTaskSequence = (): void => {
     const sortedTasks = [...tasks.value].sort((a, b) => {
-      const aValue = a[sequenceKey];
-      const bValue = b[sequenceKey];
+      const aValue = Number(a.order);
+      const bValue = Number(b.order);
 
-      // sort by accending order if values of sequenceKey are numbers
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return aValue - bValue;
-      }
-
-      // no sorting if values of sequenceKey are not numbers
-      return 0;
+      return aValue - bValue;
     });
 
     sortedTasks.forEach((task, index) => {
-      const nextTask =
-        index < sortedTasks.length - 1 ? sortedTasks[index + 1][id] : null;
+      const nextTaskId =
+        index < sortedTasks.length - 1 ? sortedTasks[index + 1].id : null;
 
-      const newTask: T & { nextTask: string | null } = {
-        ...(task as T),
-        nextTask: nextTask as string | null,
+      linkedList.value[task.id] = {
+        ...task,
+        nextTaskId,
       };
-      linkedList.value[String(task[id])] = newTask;
     });
 
-    currentTask.value = sortedTasks[0][id] as string;
+    currentTask.value = sortedTasks.length > 0 ? sortedTasks[0] : null;
   };
 
   // navigate to the next task in the sequence
   const navigateToNextTask = (): void => {
     if (
       currentTask.value !== null &&
-      linkedList.value[currentTask.value] !== undefined &&
-      linkedList.value[currentTask.value].nextTask !== null
+      linkedList.value[currentTask.value.id]?.nextTaskId !== null
     ) {
-      currentTask.value = linkedList.value[currentTask.value].nextTask;
+      const nextTask = linkedList.value[currentTask.value.id]?.nextTaskId;
+
+      if (nextTask !== null) {
+        currentTask.value = linkedList.value[nextTask];
+      }
     }
   };
 
