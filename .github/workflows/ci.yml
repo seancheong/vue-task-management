@@ -1,0 +1,35 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+      - 'release/**'
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build Examples pages
+        run: npm run build
+
+      - name: Build Library
+        run: npm run build-library
