@@ -1,6 +1,6 @@
 {
   "name": "vue-task-management",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Vue 3 Composition API library designed for task management processes",
   "license": "MIT",
   "author": "Sean Cheong Zhen Xiong (https://github.com/seancheong)",
