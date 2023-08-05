@@ -19,7 +19,7 @@ This library was created with the intention of simplifying task management proce
 
 ## Examples
 
-[sources](./src/examples)
+[See Examples](https://seancheong.github.io/vue-task-management/) ([sources](./src/examples))
 
 ## Installation
 
