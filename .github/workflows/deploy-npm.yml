@@ -1,0 +1,77 @@
+name: NPM Deployment
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+    inputs:
+      skip_deploy:
+        description: 'Should skip deployment (true/false)'
+        required: false
+        default: 'false'
+
+jobs:
+  # Check if version is already published
+  check_version:
+    runs-on: ubuntu-latest
+    outputs:
+      skip_deploy: ${{ steps.check_version.outputs.skip_deploy }}
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Check if version is already published
+        id: check_version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "skip_deploy=${{ github.event.inputs.skip_deploy }}" >> $GITHUB_OUTPUT
+          else
+            PACKAGE_VERSION=$(node -p "require('./package.json').version")
+            NPM_VERSIONS=$(npm view vue-task-management versions --json)
+            if [[ $NPM_VERSIONS =~ \"$PACKAGE_VERSION\" ]]; then
+              echo "Version $PACKAGE_VERSION is already published"
+              echo "skip_deploy=true" >> $GITHUB_OUTPUT
+            else
+              echo "Version $PACKAGE_VERSION is not published"
+              echo "skip_deploy=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+  # Publish to npm
+  publish_npm:
+    needs: check_version
+    if: ${{ needs.check_version.outputs.skip_deploy == 'false' }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build-library
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
