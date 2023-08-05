@@ -1,5 +1,9 @@
 # Vue Task Management
 
+[![codecov](https://codecov.io/gh/seancheong/vue-task-management/branch/main/graph/badge.svg?token=oRudcWjs7L)](https://codecov.io/gh/seancheong/vue-task-management)
+[![Depfu](https://badges.depfu.com/badges/b40e9b68d26c450e66e2fbd3752ca5ea/overview.svg)](https://depfu.com/github/seancheong/vue-task-management?project_id=39028)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 A Vue 3 Composition API library designed for task management processes.
 
 This library was created with the intention of simplifying task management processes within Vue applications.
